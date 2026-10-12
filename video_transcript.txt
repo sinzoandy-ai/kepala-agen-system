@@ -1,0 +1,55 @@
+=== VIDEO TRANSCRIPT - DTeQXo8fG78 ===
+Title: Multi-Agent Orchestrator - Self-Learning Agents
+
+Today you will learn how agents can improve over time without model retraining. 
+I will show you that by the example of a multi-agent orchestrator. That means this is 
+one agent that delegates a task to so-called sub-agents. We are looking at multi-agent 
+orchestration from the service perspective today. That means every agent exposes its 
+own API. For that, the A2A protocol should be our default in 2026. This has an impact 
+how we can tackle the problem. An A2A orchestrator plans by reading agent cards, which 
+means it's only as good as the cards that other people wrote. So, these cards come from 
+different teams or even from different vendors. So, this is totally out of your control. 
+So, the question is not how to get better cards, it's more about what the orchestrator 
+does when the card is all you get and it may be wrong. Okay, we are now at the demo. 
+We got three agents, the orchestrator that you can talk to via the UI, and two sub-agents. 
+The first one is the service desk agent, and this agent finds issue reports and returns 
+a ticket number. And then we've got the case status agent that needs a ticket number to 
+do anything at all. But this is not clear by the agent card. So, only the case status 
+agent has got the complete information, but at first needs the information from the 
+service desk agent. Based on the agent cards, it will route wrong the first time. So, 
+we can see that there are no lessons in memory, and here the agent calls the case 
+status agent. And this one returns, "I am missing a ticket number of this case." So, 
+without that, this agent can't do anything. Okay, so in a follow-up question, we want 
+to ask the orchestrator get the ticket number from the service desk agent first. So, 
+with that information, we can after that route to the case status agent. So, this is 
+done now by the orchestrator. Here we can see the current status of the VPN outage is 
+in progress under the ticket number TCK 4711. So, this works, but normally, if we would 
+try that again, then every time we would run into the exact same problem. And this is 
+why we need a self-learning react agent. Okay, so let's have a look at the graph. So, 
+this is the graph that we use for this react agent that is a normal react style. So, we 
+give a prompt to an LLM planner that creates a plan, executes the plan, and reflects on 
+its own plan. In this case, it will make a plan for calling other agents, get the answers 
+by the agents, and do that in a loop until it has reached its final answer. And the final 
+answer will get passed to the user again. What is a little bit special here is that we can 
+also work with an interrupt state of a task, and we can directly pass that interrupt state 
+from a sub-agent to the user and ask for input. But this is of course not enough for learning, 
+but it's actually quite simple to add that step on top. So, we got one step at the very 
+beginning. This is for recalling learned sessions, and the most important one is after the 
+final answer, we can create another node where we extract every step that was somewhat wrong 
+in the graph and make a lesson from that. And after that, we store that lesson like you first 
+need an ID from another agent inside a memory in a long-term memory. And the next time it can 
+recall from the sessions learned and not do the same mistakes again. So, actually quite simple. 
+But of course, let's zoom out a little bit for the perspective. So, where does this long-term 
+memory live? In 2026, I think agents should always be programmed via the A2A protocol, while on 
+the other hand, tools like the memory tool where we can save long-term memory should all be 
+implemented with the model context protocol. So, in this case, the orchestrator is an A2A service 
+living on port 8000, and the memory is an MCP tool server that lives on 8050. So, the connection 
+is that the orchestrator uses stream of HTTP to search for lessons and store lessons via the 
+MCP server. And because of this implementation on the graph and also on the server side, if we 
+now ask again, what is the current status of the VPN auto edge? We can see loaded one lessons 
+from the memory. And this time we didn't get an input required. It automatically knows that it 
+first needs to ask the service desk agent for the ticket number and use the ticket number to 
+make a request to the case status agent. And with that approach, the orchestrator and every 
+other A2A agent can learn its lesson from the past.
+
+=== END OF TRANSCRIPT ===
