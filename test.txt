@@ -1,0 +1,3 @@
+# Test file for GitHub kopian
+
+This is a test file to verify that the directory structure is correct.
